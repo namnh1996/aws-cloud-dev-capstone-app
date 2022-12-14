@@ -31,7 +31,6 @@ provider:
     SIGNED_URL_EXPIRATION: 300
     AUTH_0_SECRET_ID: q87XCSdqyobeLsAsPLhxJHe4I9pggSA753PaxG1n-OgmMWI5w5UlIFXKUx9YTdrr
 
-
   logs:
     # Enable API Gateway logs
     restApi: true
@@ -57,8 +56,8 @@ functions:
       - http:
           method: get
           path: todos
-          authorizer: Auth
           cors: true
+          authorizer: Auth
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -79,8 +78,8 @@ functions:
       - http:
           method: post
           path: todos
-          authorizer: Auth
           cors: true
+          authorizer: Auth
           request:
             schemas:
               application/json: ${file(models/create-todo-model.json)}
@@ -98,8 +97,8 @@ functions:
       - http:
           method: patch
           path: todos/{todoId}
-          authorizer: Auth
           cors: true
+          authorizer: Auth
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -179,6 +178,7 @@ resources:
         BillingMode: PAY_PER_REQUEST
         TableName: ${self:provider.environment.TODOS_TABLE}
         GlobalSecondaryIndexes:
+        # LocalSecondaryIndexes:
           - IndexName: ${self:provider.environment.TODOS_CREATED_AT_INDEX}
             KeySchema:
               - AttributeName: todoId

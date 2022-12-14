@@ -20,7 +20,7 @@ export async function createTodo(todoItem: TodoItem): Promise<TodoItem> {
     })
     .promise()
 
-  return todoItem
+  return todoItem as TodoItem;
 }
 
 export async function getTodosByUserId(userId: string): Promise<TodoItem[]> {
