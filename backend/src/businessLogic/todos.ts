@@ -8,28 +8,46 @@ import * as uuid from 'uuid'
 import { APIGatewayProxyEvent } from 'aws-lambda'
 import { getUserId } from '../lambda/utils'
 import { getTodosByUserId } from '../datalayer/todosAcess'
+import {createTodo} from '../datalayer/todosAcess'
 // // TODO: Implement businessLogic
 
 export async function getTodosUser(userId: string) {
   return await getTodosByUserId(userId)
 }
 
-export function todoBuider(
-  createTodoRequest: CreateTodoRequest,
-  event: APIGatewayProxyEvent
-): TodoItem {
-  const todoId = uuid.v4()
-  const todo = {
-    todoId: todoId,
-    userId: getUserId(event),
-    createdAt: new Date().toISOString(),
-    done: false,
-    attachmentUrl: '',
-    name: createTodoRequest.name,
-    dueDate: createTodoRequest.dueDate
-  }
-  return todo as TodoItem
+export async function todoBuider( event: APIGatewayProxyEvent ): Promise<TodoItem> {
+  const itemId = uuid.v4();
+  const userId = getUserId(event);
+  const newTodo: CreateTodoRequest = typeof event.body === "string" ? JSON.parse(event.body) : event.body;
+  const createdTodo = await createTodo(
+    { 
+      userId: userId,
+      todoId: itemId,
+      createdAt: new Date().toISOString(),
+      done: false,
+      ...newTodo
+    }
+  );
+return createdTodo;
 }
+
+// export function todoBuider(
+//   createTodoRequest: CreateTodoRequest,
+//   event: APIGatewayProxyEvent
+// ): TodoItem {
+//   const todoId = uuid.v4()
+//   const todo = {
+//     todoId: todoId,
+//     userId: getUserId(event),
+//     createdAt: new Date().toISOString(),
+//     done: false,
+//     attachmentUrl: '',
+//     name: createTodoRequest.name,
+//     dueDate: createTodoRequest.dueDate
+//   }
+//   return todo as TodoItem
+// }
+
 
 export async function updateTodo(
   updateTodoRequest: UpdateTodoRequest,

@@ -17,7 +17,11 @@ export const handler = middy(
     try {
       const item = await updateTodo(updatedTodo, userId, todoId)
       return {
-        statusCode: 201,
+        statusCode: 200,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Credentials': true
+        },
         body: item
       }
     } catch (error) {
